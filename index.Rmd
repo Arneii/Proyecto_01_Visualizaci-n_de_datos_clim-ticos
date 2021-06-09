@@ -24,7 +24,7 @@ library(ggpubr)
 
 ### Paso 2 
 
-Importar a R los datos, organisados de forma requerida.  
+Importar a R los datos, organizados de forma requerida.  
 
 > datos_climaticos <-   read.csv("Liberia_datos_climaticos.csv", na.strings = "")
 
@@ -44,12 +44,12 @@ slice_head(datos_climaticos, n = 5)
 ```
 
 ### Paso 4
-Visualizar las dimenciones del documento
+Visualizar las dimensiones del documento
 
 >dim(datos_climaticos)
 
 ```{r, echo=FALSE}
-#dimenciones del documento
+#dimensiones del documento
 dim(datos_climaticos)
 ```
 Aqui hay _9306_ filas y _3_ columnas
@@ -84,14 +84,14 @@ Comprobar que se hallan hecho los cambios
 newdatos_climaticos[!complete.cases(newdatos_climaticos),]
 ```
 ### Paso 8
-Cambiar los nombre de las columnas mediante rename()
+Cambiar los nombres de las columnas mediante rename()
 
 > newdatos_climaticos <-  
     newdatos_climaticos %>%  
     rename(fecha =  ï..Date,)
   
 ```{r, echo=FALSE}
-# Cambio de nombre de las columnas mediante rename()
+# Cambio de nombre de la columna mediante rename()
 newdatos_climaticos <-
   newdatos_climaticos %>%
   rename(fecha =  ï..Date,)
@@ -164,7 +164,7 @@ promd <- newdatos_climaticos %>%
     summarize(mean_1=mean(Valor))
 ```
 ### Paso 13
-Convertir a numeros los datos
+Convertir a números los datos
 
 > promd$mes <- as.numeric(promd$mes)
 
@@ -174,7 +174,7 @@ promd$mes <- as.numeric(promd$mes)
 
 ```
 ### Paso 14
-Grafico de promedios mensuales de las 4 variables solicitadas
+Gráfico de promedios mensuales de las 4 variables solicitadas
 
 >_#Grafico promedios mensuales_   
 ggplot(promd,  
@@ -182,7 +182,7 @@ ggplot(promd,
    geom_line() +  
    facet_wrap(~Indicador, nrow = 2, scale = "free")+  
    scale_x_continuous(breaks = seq(1, 12, 1))+  
-   ggtitle("Promedios mensuales",  
+   ggtitle("Promedios mensuales de la estacion de Liberia",  
     subtitle="Del 1 de enero del 2015 al 31 de marzo del 2019")+  
    xlab("Mes") +  
    ylab("Valores")
@@ -194,14 +194,14 @@ ggplot(promd,
   geom_line() +
   facet_wrap(~Indicador, nrow = 2, scale = "free")+
   scale_x_continuous(breaks = seq(1, 12, 1))+
-  ggtitle("Promedios mensuales",
+  ggtitle("Promedios mensuales de la estacion de Liberia",
   subtitle="Del 1 de enero del 2015 al 31 de marzo del 2019")+
   xlab("Mes") +
   ylab("Valores")
 ```
 
 ### Paso 15
-Calcular la suma de lluvia y evapotranpiracion
+Calcular la suma de lluvia y evapotranpiración
 
 >_#Calcular suma_   
 suma <- newdatos_climaticos %>%  
@@ -218,7 +218,7 @@ suma <- newdatos_climaticos %>%
 ```
 
 ### Paso 16
-Combertir a numeros los datos
+Convertir a números los datos
 
 > suma$mes <- as.numeric(suma$mes)
 
@@ -228,15 +228,15 @@ Combertir a numeros los datos
 
 ```
 ### Paso 17
-Crear un grafico de la suma de lluvia y evapotranspiracion
+Crear un gráfico de la suma de lluvia y evapotranspiración
 
->_#Grafico de la suma_   
+>_#Gráfico de la suma_   
 ggplot(suma,  
        aes(x = mes, y = sum_1, colour = Indicador))+  
   geom_line() +  
   facet_wrap(~Indicador, nrow = 2, scale = "free")+  
   scale_x_continuous(breaks = seq(1, 12, 1))+  
-  ggtitle("Suma de valores de la lluvia y evapotranspiracion en la estacion Liberia",  
+  ggtitle("Suma de valores de la lluvia y evapotranspiracion en la estación Liberia",  
   subtitle="Del 1 de enero del 2015 al 31 de marzo del 2019")+  
   xlab("Mes") +  
   ylab("Valores")
@@ -248,16 +248,16 @@ ggplot(suma,
   geom_line() +
   facet_wrap(~Indicador, nrow = 2, scale = "free")+
   scale_x_continuous(breaks = seq(1, 12, 1))+
-  ggtitle("Suma de valores de la lluvia y evapotranspiracion en la estacion Liberia",
+  ggtitle("Suma de valores de la lluvia y evapotranspiración en la estación Liberia",
   subtitle="Del 1 de enero del 2015 al 31 de marzo del 2019")+
   xlab("Mes") +
   ylab("Valores")
 ```
 
 ### Paso 18
-Grafico de nube de puntos de las 6 variables
+Gráfico de nube de puntos de las 6 variables
 
->_#Grafico de nube de puntos_   
+>_#Gráfico de nube de puntos_   
 ggplot(newdatos_climaticos,  
        aes(x = fecha, y = Valor, colour = Indicador))+  
   geom_point() +  
@@ -268,19 +268,19 @@ ggplot(newdatos_climaticos,
   ylab("Valores")
 
 ```{r, echo=FALSE}
-#grafico de nube de puntos 
+#gráfico de nube de puntos 
 ggplot(newdatos_climaticos,
        aes(x = fecha, y = Valor, colour = Indicador))+
   geom_point() +
   facet_wrap(~Indicador, nrow = 2, scale = "free")+
-  ggtitle("Relacion de variables de datos climaticos de la estacion, Liberia",
+  ggtitle("Relacion de variables de datos climaticos de la estación, Liberia",
   subtitle="Del 1 de enero del 2015 al 31 de marzo del 2019")+
   xlab("Años") +
   ylab("Valores")
 ```
 
 ### Paso extra 
-PD: Profe, en el proceso de buscar como hacer los graficos encontre esta forma y se ve bonito, entonces quiece ponerlo como un paso extra. Muchas Gracias
+PD: Profe, en el proceso de buscar como hacer los gráficos encontré esta forma y se ve bonito, entonces quise ponerlo como un paso extra. Muchas Gracias
 
 > p1 <- ggplot(newdatos_climaticos,  
              aes(x = fecha, y = Valor, colour = Indicador))+  
