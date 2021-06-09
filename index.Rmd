@@ -313,12 +313,12 @@ p2 <- ggplot(newdatos_climaticos,
   ylab("Frecuencia")
 
 ```
-
-Para ejecutarlo 
+Para ejecutar lo anterior 
 
 > ggarrange(p1, p2, nrow = 2)
 
 ```{r, echo=FALSE}
 ggarrange(p1, p2, nrow = 2)
 ```
+
 
