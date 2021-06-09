@@ -1,0 +1,324 @@
+---
+title: "Proyecto I: Visualización de datos climáticos"
+author: "Sara Alvarado Siles"
+output: html_document
+---
+
+### Paso 1
+Cargar librerias
+
+> library(dplyr)  
+  library(ggplot2)  
+  library(hrbrthemes)  
+  library(ggpubr)  
+  library(tidyverse)  
+  library(lubridate)
+
+```{r, echo=FALSE}
+#cargar librerias
+library(dplyr)
+library(ggplot2)
+library(hrbrthemes)
+library(ggpubr)
+```
+
+### Paso 2 
+
+Importar a R los datos, organisados de forma requerida.  
+
+> datos_climaticos <-   read.csv("Liberia_datos_climaticos.csv", na.strings = "")
+
+```{r, echo=FALSE}
+### Importar a R los datos
+datos_climaticos <- read.csv("Liberia_datos_climaticos.csv", na.strings = "")
+```
+
+### Paso 3
+Visualizar los primeros datos del documento
+
+> slice_head(datos_climaticos, n = 5)
+
+```{r, echo=FALSE}
+#primeros datos
+slice_head(datos_climaticos, n = 5)
+```
+
+### Paso 4
+Visualizar las dimenciones del documento
+
+>dim(datos_climaticos)
+
+```{r, echo=FALSE}
+#dimenciones del documento
+dim(datos_climaticos)
+```
+Aqui hay _9306_ filas y _3_ columnas
+
+### Paso 5 
+Comprobar si hay celdas vacias
+
+> datos_climaticos[!complete.cases(datos_climaticos),]  
+
+```{r, echo=FALSE}
+#comprobar si hay celdas vacias
+datos_climaticos[!complete.cases(datos_climaticos),]
+
+```
+### Paso 6
+Eliminar los NA 
+
+> newdatos_climaticos <- na.omit(datos_climaticos)
+
+```{r, echo=FALSE}
+#eliminar NA
+newdatos_climaticos <- na.omit(datos_climaticos)
+```
+
+### Paso 7 
+Comprobar que se hallan hecho los cambios
+
+> newdatos_climaticos[!complete.cases(newdatos_climaticos),]
+
+```{r, echo=FALSE}
+#ver los cambios
+newdatos_climaticos[!complete.cases(newdatos_climaticos),]
+```
+### Paso 8
+Cambiar los nombre de las columnas mediante rename()
+
+> newdatos_climaticos <-  
+    newdatos_climaticos %>%  
+    rename(fecha =  ï..Date,)
+  
+```{r, echo=FALSE}
+# Cambio de nombre de las columnas mediante rename()
+newdatos_climaticos <-
+  newdatos_climaticos %>%
+  rename(fecha =  ï..Date,)
+```
+### Paso 9
+Conversión de una columna a tipo Date 
+
+> newdatos_climaticos <-  
+    newdatos_climaticos %>%  
+    mutate(fecha = as.Date(fecha, format = "%d/%m/%Y"))
+
+```{r, echo=FALSE}
+# Conversión de una columna a tipo Date 
+newdatos_climaticos <-
+    newdatos_climaticos %>%
+    mutate(fecha = as.Date(fecha, format = "%d/%m/%Y"))
+
+```
+
+### Paso 10
+Ver de nuevo los datos
+
+>str(newdatos_climaticos) 
+
+```{r, echo=FALSE}
+#ver los cambios
+str(newdatos_climaticos)
+```
+
+### Paso 11
+Generar los histogramas de las 6 variables solicitadas
+
+>_#Histograma en facets_   
+>ggplot(newdatos_climaticos,  
+       aes(x = Valor, colour = Indicador))+  
+  geom_histogram() +  
+  facet_wrap(~Indicador, nrow = 2, scale = "free")+  
+  ggtitle("Datos climáticos de la estación Liberia, Guanacaste",
+  subtitle="Del 1 de enero del 2015 al 31 de marzo del 2019")+  
+  xlab("Frecuencia") +  
+  ylab("Valores")
+  
+```{r, echo=FALSE}
+#Histogramas 
+ggplot(newdatos_climaticos,
+       aes(x = Valor, colour = Indicador)) +
+  geom_histogram() +
+  facet_wrap( ~ Indicador, nrow = 2, scale = "free") +
+  ggtitle("Datos climáticos de la estación Liberia, Guanacaste",
+  subtitle="Del 1 de enero del 2015 al 31 de marzo del 2019")+
+  xlab("Frecuencia") +
+  ylab("Valores")
+```
+
+### Paso 12 
+
+Calcular promedios mensuales de la temperatura, humedad relativa, velocidad del viento e irradiacion.
+
+>_#Calcular promedios mensuales_  
+promd <- newdatos_climaticos %>%  
+    filter(Indicador == "Temperatura" | Indicador == "Humedad" | Indicador == "Velocidad" | Indicador == "Irradiacion") %>%  
+    group_by(Indicador, mes = format(fecha,"%m") ) %>%  
+    summarize(mean_1=mean(Valor))
+    
+```{r, echo=FALSE}
+#promedios mensuales
+promd <- newdatos_climaticos %>%
+    filter(Indicador == "Temperatura" | Indicador == "Humedad" | Indicador == "Velocidad" | Indicador == "Irradiacion") %>%
+    group_by(Indicador, mes = format(fecha,"%m") ) %>%
+    summarize(mean_1=mean(Valor))
+```
+### Paso 13
+Convertir a numeros los datos
+
+> promd$mes <- as.numeric(promd$mes)
+
+```{r, echo=FALSE}
+#convertir a datos
+promd$mes <- as.numeric(promd$mes)
+
+```
+### Paso 14
+Grafico de promedios mensuales de las 4 variables solicitadas
+
+>_#Grafico promedios mensuales_   
+ggplot(promd,  
+    aes(x = mes, y = mean_1, colour = Indicador))+  
+   geom_line() +  
+   facet_wrap(~Indicador, nrow = 2, scale = "free")+  
+   scale_x_continuous(breaks = seq(1, 12, 1))+  
+   ggtitle("Promedios mensuales",  
+    subtitle="Del 1 de enero del 2015 al 31 de marzo del 2019")+  
+   xlab("Mes") +  
+   ylab("Valores")
+
+```{r, echo=FALSE}
+#grafico de promedios mensuales
+ggplot(promd,
+       aes(x = mes, y = mean_1, colour = Indicador))+
+  geom_line() +
+  facet_wrap(~Indicador, nrow = 2, scale = "free")+
+  scale_x_continuous(breaks = seq(1, 12, 1))+
+  ggtitle("Promedios mensuales",
+  subtitle="Del 1 de enero del 2015 al 31 de marzo del 2019")+
+  xlab("Mes") +
+  ylab("Valores")
+```
+
+### Paso 15
+Calcular la suma de lluvia y evapotranpiracion
+
+>_#Calcular suma_   
+suma <- newdatos_climaticos %>%  
+  filter(Indicador == "Lluvia" | Indicador == "Evapotranspiracion") %>%  
+  group_by(Indicador, mes = format(fecha,"%m") ) %>%  
+  summarize(sum_1=sum(Valor))
+  
+```{r, echo=FALSE}
+###suma lluvia y evapotranpiracion
+   suma <- newdatos_climaticos %>%
+  filter(Indicador == "Lluvia" | Indicador == "Evapotranspiracion") %>%
+  group_by(Indicador, mes = format(fecha,"%m") ) %>%
+  summarize(sum_1=sum(Valor))
+```
+
+### Paso 16
+Combertir a numeros los datos
+
+> suma$mes <- as.numeric(suma$mes)
+
+```{r, echo=FALSE}
+#convertir a numero los datos
+ suma$mes <- as.numeric(suma$mes)
+
+```
+### Paso 17
+Crear un grafico de la suma de lluvia y evapotranspiracion
+
+>_#Grafico de la suma_   
+ggplot(suma,  
+       aes(x = mes, y = sum_1, colour = Indicador))+  
+  geom_line() +  
+  facet_wrap(~Indicador, nrow = 2, scale = "free")+  
+  scale_x_continuous(breaks = seq(1, 12, 1))+  
+  ggtitle("Suma de valores de la lluvia y evapotranspiracion en la estacion Liberia",  
+  subtitle="Del 1 de enero del 2015 al 31 de marzo del 2019")+  
+  xlab("Mes") +  
+  ylab("Valores")
+  
+```{r, echo=FALSE}
+#grafico de la suma de lluvia y evapotranpiracion
+ggplot(suma,
+       aes(x = mes, y = sum_1, colour = Indicador))+
+  geom_line() +
+  facet_wrap(~Indicador, nrow = 2, scale = "free")+
+  scale_x_continuous(breaks = seq(1, 12, 1))+
+  ggtitle("Suma de valores de la lluvia y evapotranspiracion en la estacion Liberia",
+  subtitle="Del 1 de enero del 2015 al 31 de marzo del 2019")+
+  xlab("Mes") +
+  ylab("Valores")
+```
+
+### Paso 18
+Grafico de nube de puntos de las 6 variables
+
+>_#Grafico de nube de puntos_   
+ggplot(newdatos_climaticos,  
+       aes(x = fecha, y = Valor, colour = Indicador))+  
+  geom_point() +  
+  facet_wrap(~Indicador, nrow = 2, scale = "free")+  
+  ggtitle("Valores de la suma de lluvia y evapotranspiracion",  
+  subtitle="Del 1 de enero del 2015 al 31 de marzo del 2019")+  
+  xlab("Años") +  
+  ylab("Valores")
+
+```{r, echo=FALSE}
+#grafico de nube de puntos 
+ggplot(newdatos_climaticos,
+       aes(x = fecha, y = Valor, colour = Indicador))+
+  geom_point() +
+  facet_wrap(~Indicador, nrow = 2, scale = "free")+
+  ggtitle("Relacion de variables de datos climaticos de la estacion, Liberia",
+  subtitle="Del 1 de enero del 2015 al 31 de marzo del 2019")+
+  xlab("Años") +
+  ylab("Valores")
+```
+
+### Paso extra 
+PD: Profe, en el proceso de buscar como hacer los graficos encontre esta forma y se ve bonito, entonces quiece ponerlo como un paso extra. Muchas Gracias
+
+> p1 <- ggplot(newdatos_climaticos,  
+             aes(x = fecha, y = Valor, colour = Indicador))+  
+  geom_point() +  
+  facet_wrap(~Indicador, nrow = 2, scale = "free")+  
+  ggtitle("Datos climáticos de la estación Liberia, Guanacaste")
+ 
+> p2 <- ggplot(newdatos_climaticos,  
+             aes(x = Valor, colour = Indicador))+  
+  geom_histogram() +  
+  facet_wrap(~Indicador, nrow = 2, scale = "free",  
+  subtitle="Del 1 de enero del 2015 al 31 de marzo del 2019")+  
+  xlab("Valores") +  
+  ylab("Frecuencia")
+
+```{r, echo=FALSE}
+p1 <- ggplot(newdatos_climaticos,
+             aes(x = fecha, y = Valor, colour = Indicador))+
+  geom_point() +
+  facet_wrap(~Indicador, nrow = 2, scale = "free")+
+  ggtitle("Nubes de puntos de datos climáticos de la estación Liberia, Guanacaste")
+
+p2 <- ggplot(newdatos_climaticos,
+             aes(x = Valor, colour = Indicador))+
+  geom_histogram() +
+  facet_wrap(~Indicador, nrow = 2, scale = "free")+
+  ggtitle("Histograma de datos climáticos de la estación Liberia, Guanacaste",
+  subtitle="Del 1 de enero del 2015 al 31 de marzo del 2019")+
+  xlab("Valores") +
+  ylab("Frecuencia")
+
+```
+
+Para ejecutarlo 
+
+> ggarrange(p1, p2, nrow = 2)
+
+```{r, echo=FALSE}
+ggarrange(p1, p2, nrow = 2)
+```
+
